@@ -1,0 +1,12 @@
+Professional Way to Store Measures in Power BI :: Create a dedicated “Measures Table”
+(Measures -> name will not take as Power BI reserves certain names internally, and “Measures” is one of them.)
+
+1) Modeling → New Table 
+
+_Measures = 
+DATATABLE(
+    "Dummy", STRING,
+    { {"Placeholder"} }
+)
+
+

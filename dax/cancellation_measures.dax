@@ -1,0 +1,21 @@
+-- Customer Cancellations
+Customer Cancellations =
+CALCULATE(
+    [Total Bookings],
+    Fact_ncr_ride[Cancelled Rides by Customer] = 1
+)
+
+-- Driver Cancellations
+Driver Cancellations =
+CALCULATE(
+    [Total Bookings],
+    Fact_ncr_ride[Cancelled Rides by Driver] = 1
+)
+
+-- Overall Cancellation Rate
+Cancellation Rate % =
+DIVIDE(
+    [Customer Cancellations] + [Driver Cancellations],
+    [Total Bookings],
+    0
+)

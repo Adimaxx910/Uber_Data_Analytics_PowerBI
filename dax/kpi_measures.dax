@@ -1,0 +1,18 @@
+-- Total Bookings
+Total Bookings =
+COUNT(Fact_ncr_ride[Booking ID])
+
+-- Completed Rides
+Completed Rides =
+CALCULATE(
+    [Total Bookings],
+    Fact_ncr_ride[Booking Status] = "Completed"
+)
+
+-- Completion Rate %
+Completion Rate % =
+DIVIDE(
+    [Completed Rides],
+    [Total Bookings],
+    0
+)

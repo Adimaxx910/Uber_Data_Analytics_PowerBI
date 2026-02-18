@@ -1,0 +1,13 @@
+-- Drop Location Analysis (This Is Advanced)
+
+-- Total Bookings by Drop Location
+Total Bookings (Drop) =
+CALCULATE(
+    [Total Bookings],
+    USERELATIONSHIP(
+        Fact_ncr_ride[Drop_Location_ID],
+        Dim_Location[Location ID]
+    )
+)
+
+--Since the drop-location relationship was inactive to avoid ambiguity, I used USERELATIONSHIP inside CALCULATE to activate it dynamically for drop-based --metrics because we made it inactive while designing model since two location cant make active at a time for a sinhgle value it was giving ambigous error 

@@ -1,0 +1,14 @@
+-- Total Revenue
+Total Revenue =
+CALCULATE(
+    SUM(Fact_ncr_ride[Booking Value]),
+    Fact_ncr_ride[Booking Status] = "Completed"
+)
+
+-- Average Booking Value
+Avg Booking Value =
+DIVIDE(
+    [Total Revenue],
+    [Completed Rides],
+    0
+)
