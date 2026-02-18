@@ -1,0 +1,459 @@
+⭐ What is a Star Schema (Simple Explanation)
+
+Think of it like this:
+
+             Dim_Date
+                 |
+Dim_Vehicle — Fact_ncr_ride — Dim_Location
+                 |
+           Dim_Payment
+
+
+The Fact table stays in the center.
+
+Everything descriptive moves out.
+
+🎯 STEP 1 — Identify FACT vs DIMENSION
+
+From your dataset:
+
+🔵 FACT TABLE (Numerical + transactional)
+
+Keep in Fact_Rides:
+
+Booking ID
+
+BookingDateTime
+
+Customer ID (foreign key)
+
+Vehicle Type (foreign key)
+
+Pickup Location (foreign key)
+
+Drop Location (foreign key)
+
+Booking Value
+
+Ride Distance
+
+Avg VTAT
+
+Avg CTAT
+
+Booking Status
+
+Peak_Flag
+
+Data_Validity_Flag
+
+These represent events that happened.
+
+🟢 DIMENSION TABLES (Descriptive Context)
+
+We will now create them from your existing table.
+
+🚀 HOW TO CREATE DIMENSION TABLES (Step-by-Step)
+
+We DO NOT manually type them.
+
+We extract them from your cleaned table.
+
+imp: First copy the cleaned tabel ok like("ncr_rides_clean(copy)") .Then from that copied table start creating references like dim location ,dim payment etc 
+Then only we can able to merge these dim refrenced table from copied to original Fact_ncr_rides tabble .(this name is changed from ncr_rides_clean to fact_ncr_rides)
+
+🟢 1️⃣ CREATE Dim_Date (Most Important)
+Step:
+
+Go to Power Query
+
+Right-click Fact_Rides_Clean
+
+Reference (NOT duplicate)
+
+Rename → Dim_Date
+
+Now:
+
+Keep only:
+
+BookingDateTime
+
+Booking_Hour
+
+Day_Name
+
+Day_Type
+
+Month_Name
+
+Then:
+
+Remove duplicates
+
+Now you have a proper date dimension.
+
+🚨 Advanced (Better Approach)
+
+Instead of using booking timestamps, create a proper Calendar Table in DAX later.
+
+But for now, reference-based method is fine.
+
+🟢 2️⃣ CREATE Dim_Vehicle
+
+Right-click Fact table
+
+Reference
+
+Keep only:
+
+Vehicle Type
+
+Remove duplicates
+
+Add Index Column → Vehicle_ID
+
+Now:
+
+In Fact table, merge to bring Vehicle_ID
+
+Remove Vehicle Type text
+
+Keep only Vehicle_ID
+
+Boom. You just normalized data.
+
+🟢 3️⃣ CREATE Dim_Payment
+
+Reference again:
+Keep only:
+
+Payment Method
+
+Remove duplicates
+Add:
+
+Payment_ID
+
+Merge back into Fact table.
+
+🟢 4️⃣ CREATE Dim_Location
+
+This is slightly smarter.
+
+You have:
+
+Pickup Location
+Drop Location
+
+Better approach:
+
+Create a single location dimension.
+
+Steps:
+
+Reference Fact table
+
+Keep Pickup Location → rename as Location
+
+Duplicate query
+
+Keep Drop Location → rename as Location
+
+Append both queries
+
+Remove duplicates
+
+Now you have:
+Dim_Location
+
+Add:
+
+Location_ID
+
+Merge back into Fact table:
+
+Pickup → Pickup_Location_ID
+
+Drop → Drop_Location_ID
+
+This is proper modeling.
+
+
+🟢 5️⃣ CREATE Dim_CancellationReason
+
+Reference table
+Keep:
+
+Reason for cancelling by Customer
+
+Driver Cancellation Reason
+
+Unpivot columns
+Rename as:
+
+Cancellation_Reason
+
+Remove nulls
+Remove duplicates
+
+Add:
+
+Reason_ID
+
+🧱 FINAL MODEL STRUCTURE
+⭐ Fact_ncr_ride
+
+Booking_ID
+Date_ID
+Vehicle_ID
+Payment_ID
+Pickup_Location_ID
+Drop_Location_ID
+Booking Value
+Ride Distance
+VTAT
+CTAT
+
+Status Flags
+
+⭐ Dimensions
+
+Dim_Date
+
+Dim_Vehicle
+
+Dim_Payment
+
+Dim_Location
+
+Dim_CancellationReason
+
+>>We will now:
+
+Merge ALL dimensions back into Fact
+Bring only surrogate keys
+Remove descriptive columns from Fact
+Then create relationships
+
+No shortcuts.
+🧱 BEFORE WE START
+
+You must already have created:
+
+Dim_Vehicle (Vehicle_ID, Vehicle Type)
+
+Dim_Payment (Payment_ID, Payment Method)
+
+Dim_Location (Location_ID, Location)
+
+Dim_Date (if using reference-based method)
+
+(Optional) Dim_CancellationReason
+
+Each dimension must:
+
+Have an Index column (ID)
+Have no duplicates
+Have clean values
+
+Now we merge.
+
+Go to:
+
+👉 Home → Transform Data
+(Open Power Query Editor)
+
+🟢 MERGE 1 — Dim_Vehicle into Fact
+Step 1
+
+Click Fact_Rides_Clean
+
+Step 2
+
+Home → Merge Queries
+
+Step 3
+
+Merge Window Opens
+
+Top Table:
+Fact_Rides_Clean
+
+Bottom Table:
+Dim_Vehicle
+
+Step 4
+
+Click:
+Fact_Rides_Clean[Vehicle Type]
+
+Then:
+Dim_Vehicle[Vehicle Type]
+
+(Columns must match exactly)
+
+Step 5
+
+Join Type:
+👉 Left Outer (default)
+Keep all rows from Fact.
+
+Click OK.
+
+Step 6 — Expand
+
+You’ll see a new column:
+Dim_Vehicle
+
+Click the expand icon.
+
+Select ONLY:
+☑ Vehicle_ID
+
+Uncheck:
+☑ Use original column name as prefix
+
+Click OK.
+
+Step 7 — Clean Fact
+
+Now in Fact table:
+
+You have:
+
+Vehicle Type
+
+Vehicle_ID
+
+Delete:
+❌ Vehicle Type
+
+Keep:
+✅ Vehicle_ID
+
+Done.
+
+🟢 MERGE 2 — Dim_Payment into Fact
+
+Same exact process.
+
+Match:
+
+Fact_Rides_Clean[Payment Method]
+with
+Dim_Payment[Payment Method]
+
+Expand:
+☑ Payment_ID only
+
+Delete:
+❌ Payment Method
+
+Keep:
+✅ Payment_ID
+
+🟢 MERGE 3 — Dim_Location (IMPORTANT — TWO MERGES)
+
+Because you have:
+
+Pickup Location
+
+Drop Location
+
+We need TWO foreign keys.
+
+🔹 Merge A — Pickup Location
+
+Merge:
+Fact[Pickup Location]
+with
+Dim_Location[Location]
+
+Expand:
+☑ Location_ID
+
+Rename column to:
+👉 Pickup_Location_ID
+
+Delete:
+❌ Pickup Location
+
+🔹 Merge B — Drop Location
+
+Merge:
+Fact[Drop Location]
+with
+Dim_Location[Location]
+
+Expand:
+☑ Location_ID
+
+Rename column to:
+👉 Drop_Location_ID
+
+Delete:
+❌ Drop Location
+
+🟢 MERGE 4 — Dim_Date (If You Created It via Reference)
+
+If Dim_Date was created from Fact:
+
+Better approach:
+
+Instead of merging DateTime,
+create a proper Date table later using DAX.
+
+For now:
+
+You can keep BookingDateTime in Fact
+and connect later.
+
+No need to merge Date dimension.
+
+
+
+🧼 FINAL FACT TABLE SHOULD LOOK LIKE THIS
+
+Fact_Rides_Clean:
+
+Booking_ID
+BookingDateTime
+Customer_ID
+Vehicle_ID
+Payment_ID
+Pickup_Location_ID
+Drop_Location_ID
+Booking Value
+Ride Distance
+Avg VTAT
+Avg CTAT
+Booking Status
+Peak_Flag
+Data_Validity_Flag
+
+Other numeric fields
+
+NO descriptive text columns.
+
+That’s proper normalization.
+
+🚨 VERY IMPORTANT CHECK
+
+After each merge:
+
+Row count must NOT change
+
+No null IDs created
+
+If null IDs exist → category mismatch problem
+
+Fix before continuing.
+
+🏁 FINAL STEP
+
+Click:
+
+👉 Close & Apply
+
+Wait for model to load.

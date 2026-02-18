@@ -1,0 +1,192 @@
+UBER DATA ANALYTICS PROJECT Phase 2 – Data Cleaning (Power Query Steps)
+
+  --------------------------------------------------
+  STEP 1: Preserve Raw Data - Duplicate original
+  table. - Rename original as: Uber_Raw (Do Not
+  Touch) - Rename working table as: Uber_Cleaning
+  --------------------------------------------------
+  STEP 2: Data Type Fixing Explicitly set data
+  types: - Date → Date - Time → Time - Booking ID →
+  Text - Booking Status → Text - Customer ID →
+  Text - Vehicle Type → Text - Pickup Location →
+  Text - Drop Location → Text - Avg VTAT → Decimal -
+  Avg CTAT → Decimal - Booking Value → Decimal -
+  Ride Distance → Decimal - Driver Ratings →
+  Decimal - Customer Rating → Decimal - Payment
+  Method → Text
+
+  --------------------------------------------------
+
+STEP 3: Create BookingDateTime Column
+
+Formula Used:
+
+= if [Date] = null or [Time] = null then null else DateTime.FromText(
+Text.From([Date]) & ” ” & Text.From([Time]) )
+
+Set data type → Date/Time
+
+  ---------------------------------------------------
+  STEP 4: Create Booking_Hour Column
+    Formula Used (Robust Version):
+
+= Time.Hour(Time.From([BookingDateTime]))
+
+Set Data Type → Whole Number
+
+  ---------------------------------------------------
+  STEP 5: Create Day_Name Column
+
+  Formula Used:
+
+  =Date.DayOfWeekName(Date.From([BookingDateTime]))
+
+  Set Data Type → Text
+
+  ---------------------------------------------------
+
+STEP 6: Create Day_Type (Weekday / Weekend Flag)
+
+Formula Used:
+
+ = if Date.DayOfWeek(Date.From([BookingDateTime]), Day.Monday) < 5 
+  then "Weekday" 
+  else "Weekend"
+
+  Set Data Type → Text
+
+  --------------------------------------------------
+  STEP 7: Create Month_Name Column
+
+  Formula Used:
+
+  = Date.MonthName(Date.From([BookingDateTime]))
+
+  Set Data Type → Text
+
+  --------------------------------------------------
+
+  STEP 8: Booking Status Validation Logic
+  ------------------------------------------
+
+Create Data_Validity_Flag column:
+
+Rules: 1. If Booking Status = “Completed” AND all cancellation flags = 0
+→ Valid
+
+2.  If Booking Status ≠ “Completed” AND any cancellation flag = 1 →
+    Valid
+
+3.  Else → Invalid
+
+
+= if [Booking Status] = "Completed" 
+     and ([Cancelled Rides by Customer] = 0 
+     and [Cancelled Rides by Driver] = 0 
+     and [Incomplete Rides] = 0)
+  then "Valid"
+  else if [Booking Status] <> "Completed"
+     and ([Cancelled Rides by Customer] = 1 
+     or [Cancelled Rides by Driver] = 1 
+     or [Incomplete Rides] = 1)
+  then "Valid"
+  else "Invalid"
+_____________________________________________________
+
+
+STEP 7 :Booking Value Validation
+First : [Booking Value] column should replace all nulls by 0
+
+Create column:Revenue_Validity
+
+= if [Booking Value] < 0 then "Invalid"
+  else if [Booking Status] = "Completed" and [Booking Value] = 0 then "Suspicious"
+  else "Valid"
+
+
+Name: Revenue_Validity
+-------------------------------------------------
+STEP 8: Create Peak_Flag Column
+  ---------------------------------
+
+Formula Used:
+
+=if ([Booking_Hour] >= 8 and [Booking_Hour] <= 11)
+   or ([Booking_Hour] >= 17 and [Booking_Hour] <= 21)
+  then "Peak"
+  else "Non-Peak"
+
+  ---------------------------------------------
+  STEP 9: Replace Nulls in Cancellation Flags
+  ---------------------------------------------
+
+Columns: - Cancelled Rides by Customer - Cancelled Rides by Driver -
+Incomplete Rides
+
+Action: Replace null values with 0
+
+Reason: Operational flags must be binary (0/1) for proper validation
+logic.
+
+  ------------------------------------------
+  -----------------------------
+  STEP 10: Ratings Validation
+  -----------------------------
+
+Driver Rating Clean:
+
+= if [Booking Status] <> "Completed" then null   else [Driver Ratings]
+
+Customer Rating Clean:
+
+= if [Booking Status] <> “Completed” then null else [Customer Rating]
+
+  ------------------------------
+  STEP 12: Distance Validation
+  ------------------------------
+
+Distance_Validity Column:
+Name: Distance_Validity
+
+First:Ride Distance replace null with 0
+
+= if [Ride Distance] <= 0 then “Invalid” else “Valid”
+
+data type - text
+
+  -----------------------------------
+  STEP 14: Category Standardization
+  -----------------------------------
+
+-   Capitalize Vehicle Type properly
+-   Standardize Payment Method values
+-   Clean Pickup & Drop Location formatting
+
+  -----------------------------------
+  STEP 15: Final Data Quality Check
+  -----------------------------------
+
+Before Closing Power Query:
+
+-   Record total rows before cleaning
+-   Record total rows after cleaning
+-   Calculate % Invalid records
+-   Document any removed rows
+
+__________________________________
+ Enable Load Check
+
+Right-click queries:
+
+Query	Enable Load?
+Uber_Raw	❌ Disable
+Intermediate tables	❌ Disable
+Fact_Rides_Clean	✅ Enable
+_____________________________
+
+CLOSE AND APPLY
+
+---------------------------------------------END OF PHASE 2 – CLEANING PIPELINE COMPLETE---------------------------------------------
+  
+
+
