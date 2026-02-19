@@ -12,6 +12,12 @@ CALCULATE(
     Fact_ncr_ride[Cancelled Rides by Driver] = 1
 )
 
+
+------Total Cancellations
+Total Cancellations =
+[Customer Cancellations] + [Driver Cancellations]
+
+
 -- Overall Cancellation Rate
 Cancellation Rate % =
 DIVIDE(
