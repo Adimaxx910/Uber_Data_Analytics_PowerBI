@@ -30,6 +30,8 @@ This project analyzes Uber ride booking data to uncover operational inefficienci
 - DAX
 - Git
 
+<img width="769" height="434" alt="demand_analysis" src="https://github.com/user-attachments/assets/6732871a-97bf-4ab2-a525-717186d8e594" />
+
 ## 📈 Key Insights
 (Add insights later)
 
