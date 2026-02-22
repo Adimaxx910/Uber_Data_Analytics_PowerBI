@@ -31,11 +31,13 @@ This project analyzes Uber ride booking data to uncover operational inefficienci
 - Git
 
 ##  Executive Overview Power BI Dashboard PAge
-<img width="769" height="434" alt="demand_analysis" src="https://github.com/user-attachments/assets/6732871a-97bf-4ab2-a525-717186d8e594" />
-
-
-
 <img width="772" height="432" alt="Executive_overview" src="https://github.com/user-attachments/assets/0defeece-f8da-4e71-929b-7bff5ac1af8c" />
+
+
+
+
+##  Demand Analysis Power BI Dashboard PAge
+<img width="769" height="434" alt="demand_analysis" src="https://github.com/user-attachments/assets/6732871a-97bf-4ab2-a525-717186d8e594" />
 
 
 ## 📈 Key Insights
