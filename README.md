@@ -44,6 +44,12 @@ This project analyzes Uber ride booking data to uncover operational inefficienci
 <img width="772" height="432" alt="Executive_overview" src="https://github.com/user-attachments/assets/018ae3dc-c1f3-45e7-9ee2-20c81c249b1c" />
 
 
+##  Revenue and Mon Growth % -Time series analysis 
+
+<img width="768" height="434" alt="Revenue_and_ratings" src="https://github.com/user-attachments/assets/4c0b709d-0c1c-4e8c-b0de-b18fda8afee7" />
+
+
+
 ## 📈 Key Insights
 (Add insights later)
 
