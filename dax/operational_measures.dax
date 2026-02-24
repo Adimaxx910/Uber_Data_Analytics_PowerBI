@@ -1,0 +1,17 @@
+--⏱ OPERATIONAL METRICS
+
+--Avg Pickup Time (VTAT)
+
+Avg Pickup Time =
+AVERAGE(Fact_ncr_ride[Avg VTAT])
+
+--Avg Trip Duration (CTAT)
+
+Avg Trip Duration =
+AVERAGE(Fact_ncr_ride[Avg CTAT])
+
+
+--Pickup Delay
+
+Avg Pickup Time =
+AVERAGE(Fact_ncr_ride[Avg VTAT])

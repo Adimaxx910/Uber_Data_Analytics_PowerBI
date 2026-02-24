@@ -11,3 +11,32 @@ CALCULATE(
 )
 
 --Since the drop-location relationship was inactive to avoid ambiguity, I used USERELATIONSHIP inside CALCULATE to activate it dynamically for drop-based --metrics because we made it inactive while designing model since two location cant make active at a time for a sinhgle value it was giving ambigous error 
+
+📈 PEAK vs NON-PEAK
+
+If you created Peak_Flag column:
+
+--Peak Bookings
+Peak Bookings =
+CALCULATE(
+    [Total Bookings],
+    Fact_ncr_ride[Peak_Flag] = "Peak"
+)
+
+--Non-Peak Bookings
+Non-Peak Bookings =
+CALCULATE(
+    [Total Bookings],
+    Fact_ncr_ride[Peak_Flag] = "Non-Peak"
+)
+
+
+--Cancellation Rate by Drop Location
+Cancellation Rate (Drop) =
+CALCULATE(
+    [Cancellation Rate %],
+    USERELATIONSHIP(
+        Fact_ncr_ride[Drop_Location_ID],
+        Dim_Location[Location ID]
+    )
+)
