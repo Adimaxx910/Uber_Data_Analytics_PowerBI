@@ -124,7 +124,7 @@ Identifies operational bottlenecks:
 - Pickup delay vs cancellation correlation
 - Location-level cancellation hotspots
 
-![Cancellation Deep Dive](https://github.com/user-attachments/assets/018ae3dc-c1f3-45e7-9ee2-20c81c249b1c)
+<img width="867" height="491" alt="Cencellation_deep_dive" src="https://github.com/user-attachments/assets/b85fb80c-b7a2-44b4-88d9-6f8cbe3108d5" />
 
 ---
 
